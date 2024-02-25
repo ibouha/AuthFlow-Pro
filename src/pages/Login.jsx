@@ -10,14 +10,18 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 function Login() {
   return (
     <div className="flex justify-center mt-[100px] ">
       <Card className="w-[450px]">
         <CardHeader>
           <CardTitle className="text-5xl text-blue-600">Login</CardTitle>
-          <CardDescription>
-            Deploy your new project in one-click.
+          <CardDescription className="mt-3">
+            Don&apos;t have an account?{" "}
+            <Link to={"/register"} className="text-black font-bold">
+              Sign up
+            </Link>
           </CardDescription>
         </CardHeader>
         <CardContent>

@@ -1,18 +1,62 @@
 import RoleModel from "../models/RoleModel.js";
 
-const postRole = async (req, res) => {
-  try {
-    const { name } = req.body;
-    const existingRole = await RoleModel.findOne({ name: name });
-    if (existingRole) {
-      return res.status(400).json({ message: "Role already exists" });
-    }
-    const newRole = new RoleModel({ name: name });
-    await newRole.save();
-    return res.status(201).json({ message: "Role created" });
-  } catch (err) {
-    return res.status(500).json({ message: err.message });
-  }
-};
+// Controller method to create a new role
+const roleController = {
+  createRole: async (req, res) => {
+    try {
+      const { name } = req.body;
+      const role = await RoleModel.create({ name });
 
-export default postRole;
+      res.status(201).json({
+        success: true,
+        role: role,
+      });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to create role" });
+    }
+  },
+
+  // Controller method to get all roles
+  getAllRoles: async (req, res) => {
+    try {
+      const roles = await RoleModel.find().populate("permissions");
+      res.json(roles);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch roles" });
+    }
+  },
+
+  // Controller method to update role
+  updateRole: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { name, permissions } = req.body;
+      const role = await RoleModel.findByIdAndUpdate(
+        id,
+        { name, permissions },
+        { new: true }
+      ).populate("permissions");
+      if (!role) {
+        return res.status(404).json({ error: "Role not found" });
+      }
+      res.json(role);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to update role" });
+    }
+  },
+
+  // Controller method to delete role
+  deleteRole: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const role = await RoleModel.findByIdAndDelete(id);
+      if (!role) {
+        return res.status(404).json({ error: "Role not found" });
+      }
+      res.json({ message: "Role deleted successfully" });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete role" });
+    }
+  },
+};
+export default roleController;
